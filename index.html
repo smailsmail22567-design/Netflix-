@@ -1,0 +1,86 @@
+<script>
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
+
+  // ضع معرف حسابك الشخصي على تليجرام هنا بدون @
+  const ADMIN_USERNAME = "your_username"; 
+
+  function switchTab(tabId, el) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    el.classList.add('active');
+
+    if (tabId === 'orders') renderOrders();
+  }
+
+  function renderOrders() {
+    const orders = JSON.parse(localStorage.getItem('my_netflix_orders') || '[]');
+    const container = document.getElementById('ordersContainer');
+    
+    if (orders.length === 0) {
+      container.innerHTML = '<div class="empty-orders">لا توجد طلبات سابقة حتى الآن.</div>';
+      return;
+    }
+
+    container.innerHTML = orders.map(order => `
+      <div class="order-item">
+        <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:700;">
+          <span>${order.name}</span>
+          <span style="color:#4cd964;">مكتمل</span>
+        </div>
+        <div style="font-size:11px; color:#777; margin-top:3px;">التاريخ: ${order.date}</div>
+        <div class="order-code">${order.data}</div>
+      </div>
+    `).join('');
+  }
+
+  // عند طلب شراء حساب
+  function purchase(type, price) {
+    const name = type === 'link' ? 'حساب نتفلكس برابط' : 'حساب نتفلكس تلفاز TV';
+    const msg = `مرحباً، أريد شراء ${name} بسعر $${price}`;
+    
+    // توجيه المشتري لمحادثتك مباشرة لتسليمه الحساب
+    const url = `https://t.me/${ADMIN_USERNAME}?text=${encodeURIComponent(msg)}`;
+    if (tg) {
+      tg.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+  }
+
+  // عند إرسال رقم عملية بينانس
+  function submitDeposit() {
+    const tx = document.getElementById('binanceTx').value.trim();
+    if (!tx) {
+      alert("يرجى إدخال رقم العملية أولاً");
+      return;
+    }
+    const msg = `مرحباً، قمت بتحويل الرصيد عبر بينانس. رقم العملية (TxID): ${tx}`;
+    const url = `https://t.me/${ADMIN_USERNAME}?text=${encodeURIComponent(msg)}`;
+    
+    if (tg) {
+      tg.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+    document.getElementById('binanceTx').value = '';
+  }
+
+  function copyId() {
+    navigator.clipboard.writeText("82937104");
+    alert("تم نسخ Binance ID بنجاح: 82937104");
+  }
+
+  function contactDev() {
+    const url = `https://t.me/${ADMIN_USERNAME}`;
+    if (tg) {
+      tg.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+  }
+</script>
