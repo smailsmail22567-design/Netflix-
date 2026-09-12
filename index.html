@@ -49,7 +49,7 @@
       100% { transform: scale(2.4); opacity: 0; }
     }
 
-    /* الشريط العلوي */
+    /* شريط الرأس العلوي */
     .header {
       display: flex;
       justify-content: space-between;
@@ -62,9 +62,12 @@
       z-index: 100;
     }
     .menu-btn {
-      font-size: 24px;
+      font-size: 26px;
       cursor: pointer;
       color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 2px 6px;
     }
     .brand-title {
       color: #e50914;
@@ -82,7 +85,7 @@
       color: #4cd964;
     }
 
-    /* الحاوية */
+    /* الحاوية والتبويبات */
     .container {
       padding: 16px;
       max-width: 480px;
@@ -95,7 +98,7 @@
       display: block;
     }
 
-    /* البانر */
+    /* البانر الإعلاني */
     .banner {
       background: linear-gradient(180deg, #3d0507 0%, #1a0304 100%);
       border: 1px solid #5a1114;
@@ -164,26 +167,85 @@
     }
     .btn-action:active { background: #b81d24; }
 
-    /* المهام */
-    .task-card {
-      background: #141414;
-      border: 1px solid #262626;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
+    /* النافذة المنبثقة للشرح عند ضغط ☰ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: #161616;
+      border: 1px solid #333;
+      border-radius: 14px;
+      padding: 18px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #282828;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    .close-btn {
+      font-size: 22px;
+      color: #aaa;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .guide-step {
+      background: #101010;
+      border-right: 3px solid #e50914;
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #ddd;
+    }
+    .guide-step strong {
+      color: #fff;
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    /* تصميم بطاقات المهام داخل النافذة */
+    .task-box {
+      background: #0d0d0d;
+      border: 1px solid #282828;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .task-title { font-size: 14px; font-weight: 700; color: #fff; }
-    .task-reward { font-size: 12px; color: #4cd964; font-weight: 600; margin-top: 2px; }
-    .btn-join {
+    .task-details h4 { font-size: 13px; color: #fff; }
+    .task-details span { font-size: 11px; color: #4cd964; font-weight: 700; }
+    .join-link {
       background: #229ED9;
-      color: white;
+      color: #fff;
       text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
       font-weight: 700;
     }
 
@@ -240,7 +302,7 @@
       word-break: break-all;
     }
 
-    /* الشريط السفلي */
+    /* شريط التنقل السفلي */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -286,23 +348,23 @@
 
   <!-- الشريط العلوي -->
   <div class="header">
-    <div class="menu-btn" onclick="goToTasks()">☰</div>
+    <div class="menu-btn" onclick="openGuideModal()">☰</div>
     <div class="brand-title">NETFLIX</div>
     <div class="balance-badge" id="userBalanceBadge">رصيدك: $0.00</div>
   </div>
 
   <div class="container">
 
-    <!-- 1. الرئيسية -->
+    <!-- 1. الرئيسية: الحسابات المطلوبة فقط -->
     <div id="tab-home" class="tab-content active">
       <div class="banner">
         <h3>متجر نتفلكس - تسليم فوري وتلقائي 🍿</h3>
         <p>حسابات مضمونة عبر روابط وأكواد نشطة</p>
       </div>
 
-      <div class="section-title">⚡ باقات نتفلكس المتوفرة</div>
+      <div class="section-title">⚡ باقات الحسابات المتوفرة</div>
 
-      <!-- حساب رابط -->
+      <!-- خانة حساب برابط -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -314,7 +376,7 @@
         <button class="btn-action" onclick="purchase('رابط تفعيل', 0.50)">شراء الآن</button>
       </div>
 
-      <!-- حساب تلفاز TV -->
+      <!-- خانة حساب بتلفاز TV -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -327,35 +389,7 @@
       </div>
     </div>
 
-    <!-- 2. خانة المهام وكيفية الشراء المجاني -->
-    <div id="tab-tasks" class="tab-content">
-      <div class="banner">
-        <h3>مهام جمع الرصيد المجاني 🎁</h3>
-        <p>اشترك في القناتين أدناه واحصل على $0.50 لشراء حساب نتفلكس مجاناً!</p>
-      </div>
-
-      <div class="task-card">
-        <div>
-          <div class="task-title">قناة التحديثات</div>
-          <div class="task-reward">+0.25$ رصيد</div>
-        </div>
-        <a href="https://t.me/Ref_changes" target="_blank" class="btn-join" onclick="taskClicked(1)">انضمام</a>
-      </div>
-
-      <div class="task-card">
-        <div>
-          <div class="task-title">قناة العروض</div>
-          <div class="task-reward">+0.25$ رصيد</div>
-        </div>
-        <a href="https://t.me/H_E_I_A" target="_blank" class="btn-join" onclick="taskClicked(2)">انضمام</a>
-      </div>
-
-      <button class="btn-action" style="background:#4cd964; color:#000; font-size:15px;" onclick="verifyAndReward()">
-        تحقق وتفعيل الرصيد ($0.50) ✅
-      </button>
-    </div>
-
-    <!-- 3. شحن الرصيد -->
+    <!-- 2. شحن الرصيد -->
     <div id="tab-charge" class="tab-content">
       <div class="section-title">💳 شحن الرصيد عبر Binance Pay</div>
       <div class="binance-box">
@@ -370,19 +404,19 @@
       </div>
     </div>
 
-    <!-- 4. طلباتي -->
+    <!-- 3. طلباتي -->
     <div id="tab-orders" class="tab-content">
       <div class="section-title">📦 الحسابات المشتراة</div>
       <div id="ordersContainer"></div>
     </div>
 
-    <!-- 5. الدعم -->
+    <!-- 4. الدعم الفني -->
     <div id="tab-support" class="tab-content">
       <div style="text-align: center; padding: 30px 16px; background: #141414; border-radius: 12px; border: 1px solid #222;">
         <div style="font-size:42px; margin-bottom:12px;">👨‍💻</div>
         <h3 style="font-size:17px; margin-bottom:8px;">الدعم الفني المباشر</h3>
         <p style="font-size:12px; color:#aaa; margin-bottom:20px; line-height:1.6;">
-          تواصل مع المطور في حال وجود أي مشكلة في الحسابات أو الاستفسار عن الشحن
+          تواصل مع المطور في حال واجهتك أي مشكلة أو كان لديك استفسار بخصوص الحسابات والشحن
         </p>
         <button class="btn-action" style="background:#229ED9;" onclick="contactDev()">مراسلة المطور عبر تليجرام</button>
       </div>
@@ -390,37 +424,85 @@
 
   </div>
 
-  <!-- الشريط السفلي مع إضافة زر المهام -->
+  <!-- نافذة الشرح الكامل والمهام عند الضغط على ☰ -->
+  <div class="modal-overlay" id="guideModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 16px; color:#fff;">📖 طريقة الاستخدام والشراء</h3>
+        <span class="close-btn" onclick="closeGuideModal()">✖</span>
+      </div>
+
+      <!-- خطوات الشرح -->
+      <div class="guide-step">
+        <strong>1. جمع الرصيد المجاني ($0.50):</strong>
+        سعر الحساب موحد ($0.50). يمكنك الحصول عليه مجاناً بالانضمام للقناتين التاليتين والضغط على زر التحقق بالأسفل.
+      </div>
+
+      <!-- روابط القنوات والمهام -->
+      <div class="task-box">
+        <div class="task-details">
+          <h4>قناة التحديثات</h4>
+          <span>مكافأة: +$0.25</span>
+        </div>
+        <a href="https://t.me/Ref_changes" target="_blank" class="join-link" onclick="recordClick(1)">انضمام</a>
+      </div>
+
+      <div class="task-box">
+        <div class="task-details">
+          <h4>قناة العروض</h4>
+          <span>مكافأة: +$0.25</span>
+        </div>
+        <a href="https://t.me/H_E_I_A" target="_blank" class="join-link" onclick="recordClick(2)">انضمام</a>
+      </div>
+
+      <button class="btn-action" style="background:#4cd964; color:#000; margin-top:8px;" onclick="verifyAndReward()">
+        تحقق وتفعيل الرصيد ($0.50) ✅
+      </button>
+
+      <div class="guide-step" style="margin-top: 14px;">
+        <strong>2. إتمام الشراء:</strong>
+        بعد شحن رصيدك أو تفعيله من المهام، عد إلى الواجهة الرئيسية واضغط "شراء الآن" على الحساب المطلوب (رابط تفعيل أو تلفاز TV).
+      </div>
+
+      <div class="guide-step">
+        <strong>3. استلام الكود:</strong>
+        فور الشراء، توجه لتبويب <b>"طلباتي"</b> في الشريط السفلي وستجد رابط الحساب أو كود الشاشة متاحاً فوراً.
+      </div>
+
+      <div class="guide-step">
+        <strong>4. شحن رصيد إضافي:</strong>
+        إذا أردت شراء حسابات إضافية لاحقاً، يمكنك الشحن عبر Binance Pay من تبويب "شحن الرصيد".
+      </div>
+    </div>
+  </div>
+
+  <!-- شريط التنقل السفلي -->
   <div class="bottom-nav">
-    <div class="nav-item active" id="nav-home" onclick="switchTab('home', this)">
+    <div class="nav-item active" onclick="switchTab('home', this)">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
       <span>الرئيسية</span>
     </div>
-    <div class="nav-item" id="nav-tasks" onclick="switchTab('tasks', this)">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-      <span>المهام</span>
-    </div>
-    <div class="nav-item" id="nav-charge" onclick="switchTab('charge', this)">
+    <div class="nav-item" onclick="switchTab('charge', this)">
       <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
       <span>شحن الرصيد</span>
     </div>
-    <div class="nav-item" id="nav-orders" onclick="switchTab('orders', this)">
+    <div class="nav-item" onclick="switchTab('orders', this)">
       <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
       <span>طلباتي</span>
     </div>
-    <div class="nav-item" id="nav-support" onclick="switchTab('support', this)">
+    <div class="nav-item" onclick="switchTab('support', this)">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
       <span>الدعم</span>
     </div>
   </div>
 
   <script>
-    const tg = window.Telegram?.WebApp;
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
       try { tg.ready(); tg.expand(); } catch (e) {}
     }
 
-    // انتهاء شاشة البداية
+    // إخفاء شاشة البداية N
     window.addEventListener('load', () => {
       setTimeout(() => {
         const splash = document.getElementById('splash-screen');
@@ -434,68 +516,74 @@
 
     // إدارة الرصيد
     function getBal() {
-      return parseFloat(localStorage.getItem('nf_user_bal') || '0.00');
+      return parseFloat(localStorage.getItem('user_nf_balance') || '0.00');
     }
     function setBal(val) {
-      localStorage.setItem('nf_user_bal', val.toFixed(2));
+      localStorage.setItem('user_nf_balance', val.toFixed(2));
       updateBalance();
     }
     function updateBalance() {
-      document.getElementById('userBalanceBadge').innerText = `رصيدك: $${getBal().toFixed(2)}`;
+      const badge = document.getElementById('userBalanceBadge');
+      if (badge) badge.innerText = `رصيدك: $${getBal().toFixed(2)}`;
     }
 
-    // التنقل بين التبويبات
+    // فتح وإغلاق نافذة الشرح
+    function openGuideModal() {
+      document.getElementById('guideModal').classList.add('active');
+    }
+    function closeGuideModal() {
+      document.getElementById('guideModal').classList.remove('active');
+    }
+
+    // متابعة الضغط على القنوات
+    let ch1 = false, ch2 = false;
+    function recordClick(n) {
+      if (n === 1) ch1 = true;
+      if (n === 2) ch2 = true;
+    }
+
+    function verifyAndReward() {
+      if (localStorage.getItem('tasks_claimed_status') === 'true') {
+        alert("لقد استلمت المكافأة مسبقاً!");
+        closeGuideModal();
+        return;
+      }
+      if (!ch1 || !ch2) {
+        alert("يرجى الضغط على زر الانضمام لكلتا القناتين أولاً!");
+        return;
+      }
+      setBal(getBal() + 0.50);
+      localStorage.setItem('tasks_claimed_status', 'true');
+      alert("تم التحقق بنجاح وإضافة 0.50$ إلى رصيدك! يمكنك الآن شراء الحساب مجاناً.");
+      closeGuideModal();
+    }
+
+    // التبديل بين الأقسام
     function switchTab(tabId, el) {
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       
-      document.getElementById('tab-' + tabId).classList.add('active');
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
       if (el) el.classList.add('active');
 
       if (tabId === 'orders') renderOrders();
     }
 
-    // فتح المهام عند الضغط على ☰
-    function goToTasks() {
-      switchTab('tasks', document.getElementById('nav-tasks'));
-    }
-
-    // متابعة إتمام المهام
-    let t1 = false, t2 = false;
-    function taskClicked(n) {
-      if (n === 1) t1 = true;
-      if (n === 2) t2 = true;
-    }
-
-    function verifyAndReward() {
-      if (localStorage.getItem('nf_tasks_claimed') === 'true') {
-        alert("لقد حصلت على مكافأة المهام مسبقاً!");
-        return;
-      }
-      if (!t1 || !t2) {
-        alert("يرجى الضغط على زر الانضمام لكلتا القناتين أولاً!");
-        return;
-      }
-      setBal(getBal() + 0.50);
-      localStorage.setItem('nf_tasks_claimed', 'true');
-      alert("تهانينا! تمت إضافة 0.50$ إلى رصيدك. توجه للرئيسية لاختيار حسابك مجاناً!");
-      switchTab('home', document.getElementById('nav-home'));
-    }
-
     // الشراء
     function purchase(name, price) {
-      const bal = getBal();
-      if (bal < price) {
-        alert(`رصيدك الحالي ($${bal.toFixed(2)}) لا يكفي!\nتوجه لخانة (المهام) للاشتراك في القنوات والحصول على $0.50 مجاناً.`);
+      const current = getBal();
+      if (current < price) {
+        alert(`رصيدك ($${current.toFixed(2)}) غير كافٍ!\nاضغط على (☰) في أعلى الصفحة لإكمال المهام والحصول على $0.50 مجاناً.`);
         return;
       }
 
-      if (confirm(`تأكيد طلب حساب نتفلكس (${name}) بقيمة $${price.toFixed(2)}؟`)) {
-        setBal(bal - price);
+      if (confirm(`تأكيد شراء حساب نتفلكس (${name}) بقيمة $${price.toFixed(2)}؟`)) {
+        setBal(current - price);
 
-        const orders = JSON.parse(localStorage.getItem('nf_my_orders') || '[]');
+        const orders = JSON.parse(localStorage.getItem('orders_store') || '[]');
         const code = name.includes('رابط')
-          ? 'https://netflix.com/activate?token=NF' + Math.floor(100000 + Math.random() * 900000)
+          ? 'https://netflix.com/activate?token=NF-' + Math.floor(100000 + Math.random() * 900000)
           : 'TV CODE: ' + Math.floor(100 + Math.random() * 900) + '-' + Math.floor(100 + Math.random() * 900);
 
         orders.unshift({
@@ -503,16 +591,18 @@
           date: new Date().toLocaleDateString('ar-EG'),
           code: code
         });
-        localStorage.setItem('nf_my_orders', JSON.stringify(orders));
+        localStorage.setItem('orders_store', JSON.stringify(orders));
 
-        alert("تمت العملية بنجاح! تم حفظ الكود في خانة 'طلباتي'.");
+        alert("تم الشراء بنجاح! انتقل إلى تبويب 'طلباتي' لاستلام الحساب.");
       }
     }
 
     // عرض الطلبات
     function renderOrders() {
-      const orders = JSON.parse(localStorage.getItem('nf_my_orders') || '[]');
+      const orders = JSON.parse(localStorage.getItem('orders_store') || '[]');
       const container = document.getElementById('ordersContainer');
+      if (!container) return;
+
       if (orders.length === 0) {
         container.innerHTML = '<div style="text-align:center; color:#777; padding:40px 10px;">لا توجد حسابات مشتراة حتى الآن.</div>';
         return;
@@ -522,7 +612,7 @@
         <div class="order-item">
           <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:700;">
             <span>حساب نتفلكس (${o.name})</span>
-            <span style="color:#4cd964;">نشط ومفعل</span>
+            <span style="color:#4cd964;">نشط</span>
           </div>
           <div style="font-size:11px; color:#777; margin-top:3px;">تاريخ الشراء: ${o.date}</div>
           <div class="order-code">${o.code}</div>
@@ -540,16 +630,16 @@
     function submitDeposit() {
       const tx = document.getElementById('binanceTx').value.trim();
       if (!tx) {
-        alert("يرجى إدخال رقم العملية أولاً!");
+        alert("يرجى إدخال رقم العملية (TxID) أولاً!");
         return;
       }
-      alert("تم إرسال الطلب للمراجعة وسيتم تحديث رصيدك قريباً.");
+      alert("تم إرسال طلب الشحن بنجاح، سيتم شحن الرصيد فور المراجعة.");
       document.getElementById('binanceTx').value = '';
     }
 
     // الدعم الفني
     function contactDev() {
-      const dev = "your_username"; // ضع معرف حسابك هنا
+      const dev = "your_username"; // استبدله بيوزرك
       if (tg) {
         tg.openTelegramLink(`https://t.me/${dev}`);
       } else {
