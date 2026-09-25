@@ -73,61 +73,86 @@
             width: 100%;
             margin-top: 5px;
         }
-        .loading {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 16px;
-            color: #777;
-        }
     </style>
 </head>
 <body>
 
     <h1>متجر Acona الرقمي</h1>
-    <div id="products-list" class="products-grid">
-        <div class="loading">جاري تحميل المنتجات...</div>
-    </div>
+    <div id="products-list" class="products-grid"></div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        fetch('acona_dump.json')
-            .then(res => res.json())
-            .then(data => {
-                let container = document.getElementById('products-list');
-                container.innerHTML = '';
-                
-                if (data.length === 0) {
-                    container.innerHTML = '<div class="loading">لا توجد منتجات متاحة حالياً.</div>';
-                    return;
-                }
+        // بيانات المنتجات مدمجة مباشرة داخل الكود بدون الحاجة لملف خارجي
+        const productsData = [
+            {
+                "id": 1,
+                "cat": "phones",
+                "price": 449,
+                "en": {"n": "iPhone 11 Pro Max 256GB"}
+            },
+            {
+                "id": 2,
+                "cat": "phones",
+                "price": 549,
+                "en": {"n": "iPhone 12 Pro Max 256GB"}
+            },
+            {
+                "id": 3,
+                "cat": "phones",
+                "price": 599,
+                "en": {"n": "iPhone 13 128GB"}
+            },
+            {
+                "id": 4,
+                "cat": "laptops",
+                "price": 849,
+                "en": {"n": "MacBook Pro 13\" M2"}
+            },
+            {
+                "id": 5,
+                "cat": "wear",
+                "price": 649,
+                "en": {"n": "Apple Watch Ultra 2 49mm"}
+            },
+            {
+                "id": 6,
+                "cat": "acc",
+                "price": 39,
+                "en": {"n": "65W GaN Fast Charger"}
+            }
+        ];
 
-                data.forEach(item => {
-                    let name = item.en && item.en.n ? item.en.n : 'منتج بدون اسم';
-                    let price = item.price || 0;
-                    let category = item.cat || 'عام';
-                    
-                    let card = document.createElement('div');
-                    card.className = 'product-card';
-                    card.innerHTML = `
-                        <div class="product-info">
-                            <span class="product-title">${name}</span>
-                            <span class="product-category">${category}</span>
-                        </div>
-                        <div class="product-price">$${price}</div>
-                        <button class="btn-buy" onclick="buyProduct('${name.replace(/'/g, "\\'")}', ${price})">شراء الآن</button>
-                    `;
-                    container.appendChild(card);
-                });
-            })
-            .catch(err => {
-                document.getElementById('products-list').innerHTML = '<div class="loading">خطأ في تحميل ملف المنتجات.</div>';
+        function renderProducts() {
+            let container = document.getElementById('products-list');
+            container.innerHTML = '';
+
+            productsData.forEach(item => {
+                let name = item.en.n;
+                let price = item.price;
+                let category = item.cat;
+                
+                let card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-info">
+                        <span class="product-title">${name}</span>
+                        <span class="product-category">${category}</span>
+                    </div>
+                    <div class="product-price">$${price}</div>
+                    <button class="btn-buy" onclick="buyProduct('${name}', ${price})">شراء الآن</button>
+                `;
+                container.appendChild(card);
             });
+        }
 
         function buyProduct(name, price) {
             tg.showAlert(`تم اختيار المنتج:\n${name}\nالسعر: $${price}\n\nتم إرسال الطلب بنجاح!`);
         }
+
+        // تشغيل عرض المنتجات فور فتح الصفحة
+        renderProducts();
     </script>
 </body>
 </html>
