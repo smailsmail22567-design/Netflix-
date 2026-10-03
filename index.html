@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fox Store DZ - المتجر الرسمي</title>
+    
+    <!-- استدعاء مكتبة إعلانات Adsgram الرسمية -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
     <style>
         /* Fox Store DZ Full Stylesheet */
         :root {
@@ -377,7 +381,7 @@
             <a href="#tasks" class="btn">استعرض المهام والمنتجات</a>
         </section>
 
-        <!-- قسم المهام الجديد (مطابق للصورة تماماً) -->
+        <!-- قسم المهام -->
         <section id="tasks" class="tasks-section">
             <div class="tasks-header-title">🎁 مهام جمع الرصيد المجاني</div>
             <div class="tasks-header-desc">اجمع رصيدك يومياً ومجاناً لشراء حساباتك المفضلة!</div>
@@ -410,14 +414,14 @@
                 <a href="#" class="btn-action">انضمام</a>
             </div>
 
-            <!-- مهمة مشاهدة الإعلان (مضافة تحت مهام الانضمام كما طلبت) -->
+            <!-- مهمة مشاهدة الإعلان المرتبطة بـ Adsgram (Block ID: 51761) -->
             <div class="task-group-title">🎬 مهمة الإعلانات</div>
             <div class="task-box">
                 <div class="task-info">
                     <div class="title">مشاهدة إعلان ترويجي</div>
                     <div class="reward-green">مكافأة: +$0.10</div>
                 </div>
-                <button class="btn-action" onclick="alert('قريباً سيتم ربط الإعلان هنا!')">مشاهدة</button>
+                <button class="btn-action" onclick="showAdsgramRewardAd()">مشاهدة</button>
             </div>
 
             <button class="btn-success-big">✅ تحقق وتفعيل رصيد القنوات ($0.50)</button>
@@ -492,8 +496,23 @@
         <p>جميع الحقوق محفوظة © 2026 — Fox Store DZ. مدعوم بالكامل بواسطة WORM.</p>
     </footer>
 
+    <!-- كود الجافاسكريبت لتشغيل إعلانات Adsgram بالمعرف 51761 -->
     <script>
-        console.log("Fox Store DZ initialized successfully with Tasks section.");
+        // تهيئة وحدة التحكم بالإعلانات بالـ Block ID الخاص بك
+        const adController = window.Adsgram.init({ blockId: "51761" });
+
+        function showAdsgramRewardAd() {
+            adController.show().then((result) => {
+                // حدث عندما يشاهد المستخدم الإعلان للنهاية بنجاح
+                alert("مبروك! لقد أتممت مشاهدة الإعلان وحصلت على مكافأة +$0.10");
+                // يمكنك هنا إضافة كود لتحديث الرصيد في الصفحة إن أردت
+            }).catch((result) => {
+                // حدث إذا قام المستخدم بإغلاق الإعلان قبل نهايته
+                alert("يجب إكمال مشاهدة الإعلان للنهاية لكي تحصل على المكافأة!");
+            });
+        }
+
+        console.log("Fox Store DZ initialized successfully with Adsgram integration.");
     </script>
 </body>
 </html>
