@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fox Store DZ - المتجر الرسمي</title>
-    <!-- مكتبة Adsgram SDK للإعلانات -->
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <title>NETFLIX ACCOUNT</title>
     <style>
-        /* Fox Store DZ Full Stylesheet */
         :root {
-            --bg-primary: #0a0f1d;
-            --bg-secondary: #111827;
-            --bg-card: #1f2937;
+            --bg-primary: #0e1217;
+            --bg-card: #161b22;
             --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --border-color: #374151;
             --success-color: #10b981;
+            --text-main: #f9fafb;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+            --danger-color: #ef4444;
         }
 
         * {
@@ -33,10 +29,12 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-bottom: 70px; /* مساحة للقائمة السفلية */
         }
 
+        /* شريط العلوي (Header) */
         header {
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-color);
             padding: 1rem 5%;
             display: flex;
@@ -47,398 +45,240 @@
             z-index: 1000;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-container h1 {
-            font-size: 1.5rem;
-            color: var(--accent-color);
+        .logo-title {
+            font-size: 1.2rem;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        nav ul li a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: var(--accent-color);
+        .balance-badge {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
         .main-container {
-            max-width: 1300px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
+            max-width: 600px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
             flex: 1;
             width: 100%;
         }
 
-        .hero-banner {
-            background: linear-gradient(135deg, #1e3a8a 0%, #111827 100%);
-            border-radius: 1rem;
-            padding: 3rem 2rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .hero-banner h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+        /* بانر العنوان الرئيسي */
+        .banner-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
             color: var(--text-main);
         }
 
-        .hero-banner p {
+        .banner-desc {
+            font-size: 0.85rem;
             color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
+            margin-bottom: 1.2rem;
         }
 
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+        .section-header {
+            font-size: 0.95rem;
             font-weight: 700;
-            border-right: 4px solid var(--accent-color);
-            padding-right: 10px;
+            color: var(--text-main);
+            margin: 1.2rem 0 0.6rem 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        /* تنسيق مهام الإعلانات */
-        .tasks-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .task-card {
+        /* بطاقات المهام */
+        .task-box {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 0.75rem;
-            padding: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.3s ease;
+            align-items: center;
         }
 
-        .task-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .task-title {
-            font-size: 1.1rem;
+        .task-info .title {
             font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .task-reward {
-            color: #60a5fa;
-            font-weight: 800;
-            margin-bottom: 1rem;
             font-size: 0.95rem;
+            margin-bottom: 0.2rem;
         }
 
-        .btn-task {
+        .task-info .reward-green {
+            color: var(--success-color);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .task-info .status-red {
+            color: var(--danger-color);
+            font-size: 0.75rem;
+        }
+
+        .btn-action {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 0.6rem 1rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 0.5rem;
             font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 100%;
+            text-decoration: none;
+            transition: background-color 0.2s;
         }
 
-        .btn-task:hover {
-            background-color: var(--accent-hover);
+        .btn-action:hover {
+            background-color: #2563eb;
         }
 
-        .btn-task.completed {
-            background-color: var(--success-color);
+        .btn-action.disabled {
+            background-color: #374151;
+            color: var(--text-muted);
             cursor: not-allowed;
         }
 
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .product-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
-        }
-
-        .product-image {
-            height: 180px;
-            background-color: #2d3748;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .product-info {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .product-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-desc {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            flex: 1;
-        }
-
-        .product-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .product-price {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #60a5fa;
-        }
-
-        .btn {
-            background-color: var(--accent-color);
+        .btn-success-big {
+            background-color: var(--success-color);
             color: white;
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        footer {
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
             text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            margin-top: auto;
         }
 
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            nav ul {
-                gap: 1rem;
-            }
-            .hero-banner h2 {
-                font-size: 2rem;
-            }
+        /* القائمة السفلية (Bottom Navigation) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.6rem 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            gap: 3px;
+        }
+
+        .nav-item.active {
+            color: #ef4444; /* اللون الأحمر المميز لنظام المهام في الصورة */
+        }
+
+        .nav-item span {
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
 
+    <!-- الشريط العلوي -->
     <header>
-        <div class="logo-container">
-            <h1>Fox Store DZ</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="#">الرئيسية</a></li>
-                <li><a href="#tasks">المهام اليومية</a></li>
-                <li><a href="#products">المنتجات</a></li>
-            </ul>
-        </nav>
+        <div class="logo-title">NETFLEX</div>
+        <div class="balance-badge" id="userBalance">رصيدك: 0.50$</div>
     </header>
 
     <div class="main-container">
-        <section class="hero-banner">
-            <h2>مرحباً بك في Fox Store DZ</h2>
-            <p>منصتك الموثوقة للحصول على أفضل الخدمات الرقمية، وحساب رصيد مجاني من خلال إتمام مهام مشاهدة الإعلانات اليومية.</p>
-            <a href="#tasks" class="btn">ابدأ إتمام المهام الآن</a>
-        </section>
+        
+        <!-- عنوان القسم -->
+        <div class="banner-title">🎁 مهام جمع الرصيد المجاني</div>
+        <div class="banner-desc">اجمع رصيدك يومياً ومجاناً لشراء حساباتك المفضلة!</div>
 
-        <!-- قسم مهام مشاهدة الإعلانات (5 مهمات) -->
-        <section id="tasks">
-            <h3 class="section-title">مهام الإعلانات (احصل على رصيد مجاني)</h3>
-            <div class="tasks-container" id="tasksGrid">
-                
-                <!-- المهمة 1 -->
-                <div class="task-card">
-                    <div>
-                        <div class="task-title">مهمة الإعلان الأول</div>
-                        <div class="task-reward">المكافأة: 50 دج في الرصيد</div>
-                    </div>
-                    <button class="btn-task" id="taskBtn-1" onclick="watchAd(1)">شاهد الإعلان</button>
-                </div>
-
-                <!-- المهمة 2 -->
-                <div class="task-card">
-                    <div>
-                        <div class="task-title">مهمة الإعلان الثاني</div>
-                        <div class="task-reward">المكافأة: 50 دج في الرصيد</div>
-                    </div>
-                    <button class="btn-task" id="taskBtn-2" onclick="watchAd(2)">شاهد الإعلان</button>
-                </div>
-
-                <!-- المهمة 3 -->
-                <div class="task-card">
-                    <div>
-                        <div class="task-title">مهمة الإعلان الثالث</div>
-                        <div class="task-reward">المكافأة: 50 دج في الرصيد</div>
-                    </div>
-                    <button class="btn-task" id="taskBtn-3" onclick="watchAd(3)">شاهد الإعلان</button>
-                </div>
-
-                <!-- المهمة 4 -->
-                <div class="task-card">
-                    <div>
-                        <div class="task-title">مهمة الإعلان الرابع</div>
-                        <div class="task-reward">المكافأة: 50 دج في الرصيد</div>
-                    </div>
-                    <button class="btn-task" id="taskBtn-4" onclick="watchAd(4)">شاهد الإعلان</button>
-                </div>
-
-                <!-- المهمة 5 -->
-                <div class="task-card">
-                    <div>
-                        <div class="task-title">مهمة الإعلان الخامس</div>
-                        <div class="task-reward">المكافأة: 50 دج في الرصيد</div>
-                    </div>
-                    <button class="btn-task" id="taskBtn-5" onclick="watchAd(5)">شاهد الإعلان</button>
-                </div>
-
+        <!-- قسم الهدية اليومية -->
+        <div class="section-header">⏱️ الهدية اليومية (مرتين يومياً)</div>
+        <div class="task-box">
+            <div class="task-info">
+                <div class="title">هدية يومية (+$0.11)</div>
+                <div class="status-red" id="dailyStatus">انتهت محاولات اليوم! تعود بعد: 23:59:33</div>
             </div>
-        </section>
+            <button class="btn-action disabled" id="dailyBtn">انتهاء</button>
+        </div>
 
-        <!-- قسم المنتجات -->
-        <section id="products">
-            <h3 class="section-title">قائمة المنتجات المتوفرة</h3>
-            <div class="products-grid">
-                
-                <div class="product-card">
-                    <div class="product-image">Netflix 4K UHD</div>
-                    <div class="product-info">
-                        <div class="product-title">حساب نتفليكس رسمي</div>
-                        <div class="product-desc">حساب بريميوم لمدة شهر كامل بجودة Ultra HD 4K، شاشة خاصة مع ضمان كامل.</div>
-                        <div class="product-footer">
-                            <span class="product-price">1200 دج</span>
-                            <a href="#" class="btn">اطلب الآن</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-image">Shahid VIP</div>
-                    <div class="product-info">
-                        <div class="product-title">اشتراك شاهد VIP</div>
-                        <div class="product-desc">استمتع بمشاهدة أحدث المسلسلات والأفلام الحصرية بدقة عالية بدون إعلانات.</div>
-                        <div class="product-footer">
-                            <span class="product-price">900 دج</span>
-                            <a href="#" class="btn">اطلب الآن</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-image">Spotify Premium</div>
-                    <div class="product-info">
-                        <div class="product-title">تفعيل سبوتيفاي بريميوم</div>
-                        <div class="product-desc">ترقية حسابك الشخصي إلى سبوتيفاي بريميوم لمدة سنة كاملة بأمان تام.</div>
-                        <div class="product-footer">
-                            <span class="product-price">1500 دج</span>
-                            <a href="#" class="btn">اطلب الآن</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-image">Google Play / App Store</div>
-                    <div class="product-info">
-                        <div class="product-title">بطاقات متجر أمريكي / فري فاير</div>
-                        <div class="product-desc">شحن جواهر فري فاير، ببجي، وبطاقات الهدايا بمختلف الفئات بشكل فوري.</div>
-                        <div class="product-footer">
-                            <span class="product-price">حسب الطلب</span>
-                            <a href="#" class="btn">اطلب الآن</a>
-                        </div>
-                    </div>
-                </div>
-
+        <!-- قسم مهام الاشتراك بالقنوات -->
+        <div class="section-header">📢 مهام الاشتراك بالقنوات</div>
+        
+        <div class="task-box">
+            <div class="task-info">
+                <div class="title">قناة التحديثات</div>
+                <div class="reward-green">مكافأة: +$0.25</div>
             </div>
-        </section>
+            <a href="https://t.me/Ref_changes" target="_blank" class="btn-action" onclick="joinChannel('c1')">انضمام</a>
+        </div>
+
+        <div class="task-box">
+            <div class="task-info">
+                <div class="title">قناة العروض</div>
+                <div class="reward-green">مكافأة: +$0.25</div>
+            </div>
+            <a href="https://t.me/H_E_I_A" target="_blank" class="btn-action" onclick="joinChannel('c2')">انضمام</a>
+        </div>
+
+        <!-- زر التحقق والتفعيل -->
+        <button class="btn-success-big" onclick="verifyChannels()">✅ تحقق وتفعيل رصيد القنوات ($0.50)</button>
+
     </div>
 
-    <footer>
-        <p>جميع الحقوق محفوظة © 2026 — Fox Store DZ. مدعوم بالكامل بواسطة WORM.</p>
-    </footer>
+    <!-- القائمة السفلية الثابتة -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span>❓</span>
+            الدعم
+        </a>
+        <a href="#" class="nav-item">
+            <span>📦</span>
+            طلباتي
+        </a>
+        <a href="#" class="nav-item">
+            <span>💳</span>
+            شحن الرصيد
+        </a>
+        <a href="#" class="nav-item active">
+            <span>➕</span>
+            المهام
+        </a>
+        <a href="#" class="nav-item">
+            <span>🏠</span>
+            الرئيسية
+        </a>
+    </nav>
 
     <script>
-        // إعداد وحدة Adsgram (استبدل 'your-block-id-here' بالـ Block ID الخاص بك من لوحة تحكم Adsgram)
-        const adController = window.Adsgram.init({ blockId: "your-block-id-here" });
+        let balance = 0.50;
 
-        function watchAd(taskNumber) {
-            const btn = document.getElementById(`taskBtn-${taskNumber}`);
-            
-            if (btn.classList.contains('completed')) {
-                alert("لقد أكملت هذه المهمة مسبقاً!");
-                return;
-            }
-
-            // تشغيل الإعلان
-            adController.show().then((result) => {
-                // نجاح مشاهدة الإعلان بالكامل
-                btn.innerText = "تمت المهمة ✅";
-                btn.classList.add('completed');
-                alert("مبروك! حصلت على 50 دج رصيد إضافي.");
-                
-                // هنا يمكنك إضافة كود إرسال الأرباح لقاعدة البيانات أو تحديث رصيد المستخدم محلياً
-            }).catch((result) => {
-                // إلغاء الإعلان أو خطأ في المشاهدة
-                alert("يجب إكمال مشاهدة الإعلان للنهاية للحصول على المكافأة!");
-            });
+        function joinChannel(channelId) {
+            console.log("تم النقر للانضمام إلى القناة: " + channelId);
         }
 
-        console.log("Fox Store DZ initialized successfully with Adsgram tasks.");
+        function verifyChannels() {
+            // محاكاة التحقق من الانضمام وإضافة الرصيد
+            balance += 0.50;
+            document.getElementById('userBalance').innerText = `رصيدك: $${balance.toFixed(2)}`;
+            alert("✅ تم التحقق بنجاح! وأضيفت المكافأة إلى رصيدك.");
+        }
+
+        console.log("Task page loaded matching your design.");
     </script>
 </body>
 </html>
