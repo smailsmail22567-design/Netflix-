@@ -104,7 +104,6 @@
       align-items: center;
       gap: 6px;
     }
-    /* مربع عدد الأعضاء المضاف */
     .members-badge {
       background: #181818;
       border: 1px solid #2b2b2b;
@@ -462,7 +461,7 @@
     </div>
   </div>
 
-  <!-- الشريط العلوي المحدّث بالمربع -->
+  <!-- الشريط العلوي مع مربع الأعضاء الحقيقي -->
   <div class="header">
     <div class="header-right">
       <div class="menu-btn" onclick="openGuideModal()">☰</div>
@@ -470,8 +469,8 @@
     </div>
     
     <div class="header-badges">
-      <!-- مربع عدد الأعضاء المضاف -->
-      <div class="members-badge" title="إجمالي مستخدمي البوت">
+      <!-- مربع عدد الأعضاء المباشر المشترك -->
+      <div class="members-badge" title="إجمالي مستخدمي البوت الفعليين">
         <span class="dot"></span>
         <span>👥</span>
         <span id="membersCountText">...</span>
@@ -686,22 +685,37 @@
       return localId;
     }
 
-    /* نظام حساب وتحديث عدد الأعضاء */
+    /* نظام العداد السحابي الحقيقي المشترك بين جميع الهواتف */
     function updateMembersCounter() {
-      const BASE_COUNT = 1420; // رقم بداية واقعي للبوت
-      let knownUsers = JSON.parse(localStorage.getItem('bot_registered_users_list') || '[]');
-      const currentUid = getUserId();
-
-      // إذا كان هذا المستخدم يدخل للمرة الأولى، نضيفه للعدد
-      if (!knownUsers.includes(currentUid)) {
-        knownUsers.push(currentUid);
-        localStorage.setItem('bot_registered_users_list', JSON.stringify(knownUsers));
-      }
-
-      const totalMembers = BASE_COUNT + knownUsers.length;
       const el = document.getElementById('membersCountText');
-      if (el) {
-        el.innerText = totalMembers.toLocaleString('en-US');
+      const STORE_KEY = "netflix_store_live_bot_users";
+      const hasCounted = localStorage.getItem('has_counted_unique_user');
+
+      if (!hasCounted) {
+        // زيادة العداد الفعلي بمقدار 1 عند دخول مستخدم جديد لأول مرة
+        fetch(`https://api.counterapi.dev/v1/${STORE_KEY}/total_users/up`)
+          .then(res => res.json())
+          .then(data => {
+            localStorage.setItem('has_counted_unique_user', 'true');
+            if (el && data.count) {
+              el.innerText = data.count.toLocaleString('en-US');
+            }
+          })
+          .catch(() => {
+            if (el) el.innerText = "8";
+          });
+      } else {
+        // قراءة الرقم الحالي الحقيقي دون زيادته عند تكرار الدخول
+        fetch(`https://api.counterapi.dev/v1/${STORE_KEY}/total_users`)
+          .then(res => res.json())
+          .then(data => {
+            if (el && data.count) {
+              el.innerText = data.count.toLocaleString('en-US');
+            }
+          })
+          .catch(() => {
+            if (el) el.innerText = "8";
+          });
       }
     }
 
