@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>متجر حسابات نتفلكس</title>
+  <!-- مكتبات تليجرام وإعلانات Adsgram الرسمية -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -249,7 +251,7 @@
       cursor: not-allowed;
     }
 
-    /* زر الإعلانات الجديد المميز */
+    /* زر إعلانات Adsgram */
     .btn-ad-watch {
       background: linear-gradient(135deg, #e50914, #ff3b30);
       color: white;
@@ -514,7 +516,7 @@
         تحقق وتفعيل رصيد القنوات (0.50$) ✅
       </button>
 
-      <!-- القسم الجديد: مشاهدة الإعلانات تحت مهام القنوات -->
+      <!-- مشاهدة إعلانات Adsgram الحقيقية -->
       <div class="section-title" style="margin-top: 25px;">🎬 مشاهدة إعلانات لربح الرصيد</div>
       <div class="task-card" style="border: 1px solid #3d0507; background: #160d0e;">
         <div>
@@ -624,6 +626,9 @@
     if (tg) {
       try { tg.ready(); tg.expand(); } catch (e) {}
     }
+
+    // معرّف إعلان Adsgram الخاص بك
+    const ADSGRAM_BLOCK_ID = "51864";
 
     function getUserId() {
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
@@ -829,7 +834,7 @@
       }
     }
 
-    /* نظام مشاهدة الإعلانات */
+    /* نظام مشاهدة إعلانات Adsgram الحقيقية (Block ID: 51864) */
     let adInterval = null;
     let isWatchingAd = false;
 
@@ -871,35 +876,37 @@
       }
 
       if (isWatchingAd) return;
-      isWatchingAd = true;
 
       const btn = document.getElementById('adWatchBtn');
       const btnText = document.getElementById('adBtnText');
       const statusText = document.getElementById('adStatusText');
 
-      let countdown = 15; // مدة مشاهدة الإعلان
-      btn.className = "btn-ad-watch disabled";
-      btnText.innerText = `مشاهدة (${countdown}ث)`;
-      if (statusText) statusText.innerText = "يتم الآن احتساب المكافأة...";
+      if (window.Adsgram) {
+        isWatchingAd = true;
+        btn.className = "btn-ad-watch disabled";
+        btnText.innerText = "جاري التحميل...";
 
-      const watchTimer = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-          btnText.innerText = `مشاهدة (${countdown}ث)`;
-        } else {
-          clearInterval(watchTimer);
+        // استدعاء وحدة Adsgram المعتمدة
+        const AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+
+        AdController.show().then((result) => {
           isWatchingAd = false;
-
-          // إضافة المكافأة
+          // إضافة المكافأة فور انتهاء الإعلان بنجاح
           setBal(getBal() + 0.05);
-
-          // ضبط فاصل زمني (مثلاً 45 ثانية بين كل إعلان)
-          localStorage.setItem(getUserKey('ad_cooldown'), (Date.now() + (45 * 1000)).toString());
-
-          alert("🎉 أحسنت! شاهدت الإعلان وحصلت على +0.05$ تمت إضافتها إلى رصيدك!");
+          // فاصل زمني 30 ثانية بين كل إعلان والآخر
+          localStorage.setItem(getUserKey('ad_cooldown'), (Date.now() + (30 * 1000)).toString());
+          alert("🎉 تهانينا! شاهدت الإعلان بالكامل وحصلت على +0.05$ في رصيدك!");
           refreshAdUI();
-        }
-      }, 1000);
+        }).catch((err) => {
+          isWatchingAd = false;
+          refreshAdUI();
+          console.error("Adsgram error:", err);
+          alert("⚠️ لم تكتمل مشاهدة الإعلان أو لم يتوفر إعلان في الوقت الحالي. حاول بعد قليل!");
+        });
+
+      } else {
+        alert("جاري تحميل مزود الإعلانات، يرجى المحاولة بعد قليل...");
+      }
     }
 
     function openGuideModal() { document.getElementById('guideModal').classList.add('active'); }
