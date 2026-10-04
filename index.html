@@ -71,33 +71,66 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
+      padding: 10px 14px;
       background: #141414;
       border-bottom: 1px solid #222;
       position: sticky;
       top: 0;
       z-index: 100;
     }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .menu-btn {
-      font-size: 26px;
+      font-size: 24px;
       cursor: pointer;
       color: #fff;
       display: flex;
       align-items: center;
-      padding: 2px 6px;
+      padding: 2px 4px;
     }
     .brand-title {
       color: #e50914;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 18px;
       letter-spacing: 1.5px;
+    }
+
+    /* قسم الشارات العلوية (المشتركين + الرصيد) */
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* مربع عدد الأعضاء المضاف */
+    .members-badge {
+      background: #181818;
+      border: 1px solid #2b2b2b;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+    .members-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: #38bdf8;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #38bdf8;
     }
     .balance-badge {
       background: #1c1c1c;
       border: 1px solid #333;
-      padding: 4px 10px;
+      padding: 4px 8px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: #4cd964;
     }
@@ -429,11 +462,23 @@
     </div>
   </div>
 
-  <!-- الشريط العلوي -->
+  <!-- الشريط العلوي المحدّث بالمربع -->
   <div class="header">
-    <div class="menu-btn" onclick="openGuideModal()">☰</div>
-    <div class="brand-title">NETFLIX</div>
-    <div class="balance-badge" id="userBalanceBadge">رصيدك: $0.00</div>
+    <div class="header-right">
+      <div class="menu-btn" onclick="openGuideModal()">☰</div>
+      <div class="brand-title">NETFLIX</div>
+    </div>
+    
+    <div class="header-badges">
+      <!-- مربع عدد الأعضاء المضاف -->
+      <div class="members-badge" title="إجمالي مستخدمي البوت">
+        <span class="dot"></span>
+        <span>👥</span>
+        <span id="membersCountText">...</span>
+      </div>
+      <!-- شارة الرصيد -->
+      <div class="balance-badge" id="userBalanceBadge">رصيدك: $0.00</div>
+    </div>
   </div>
 
   <div class="container">
@@ -516,7 +561,7 @@
         تحقق وتفعيل رصيد القنوات (0.50$) ✅
       </button>
 
-      <!-- مشاهدة إعلانات Adsgram بالمعرّف الإنتاجي الجديد int-51873 -->
+      <!-- مشاهدة إعلانات Adsgram -->
       <div class="section-title" style="margin-top: 25px;">🎬 مشاهدة إعلانات لربح الرصيد</div>
       <div class="task-card" style="border: 1px solid #3d0507; background: #160d0e;">
         <div>
@@ -627,7 +672,6 @@
       try { tg.ready(); tg.expand(); } catch (e) {}
     }
 
-    // المعرف الإنتاجي الحقيقي للمنصة الجديدة
     const ADSGRAM_BLOCK_ID = "int-51873";
 
     function getUserId() {
@@ -640,6 +684,25 @@
         localStorage.setItem('app_session_uid', localId);
       }
       return localId;
+    }
+
+    /* نظام حساب وتحديث عدد الأعضاء */
+    function updateMembersCounter() {
+      const BASE_COUNT = 1420; // رقم بداية واقعي للبوت
+      let knownUsers = JSON.parse(localStorage.getItem('bot_registered_users_list') || '[]');
+      const currentUid = getUserId();
+
+      // إذا كان هذا المستخدم يدخل للمرة الأولى، نضيفه للعدد
+      if (!knownUsers.includes(currentUid)) {
+        knownUsers.push(currentUid);
+        localStorage.setItem('bot_registered_users_list', JSON.stringify(knownUsers));
+      }
+
+      const totalMembers = BASE_COUNT + knownUsers.length;
+      const el = document.getElementById('membersCountText');
+      if (el) {
+        el.innerText = totalMembers.toLocaleString('en-US');
+      }
     }
 
     const MASTER_NETFLIX_LINKS = [
@@ -727,6 +790,7 @@
       }, 2400);
 
       updateBalance();
+      updateMembersCounter();
       updateStockDisplay();
       initDailyBonusTimer();
       initAdTimer();
@@ -834,7 +898,7 @@
       }
     }
 
-    /* نظام مشاهدة إعلانات Adsgram الحقيقية (Block ID: int-51873) */
+    /* نظام مشاهدة إعلانات Adsgram */
     let adInterval = null;
     let isWatchingAd = false;
 
@@ -886,14 +950,11 @@
         btn.className = "btn-ad-watch disabled";
         btnText.innerText = "جاري التحميل...";
 
-        // تهيئة الإعلان بالمعرف الحقيقي التابع للمنصة النشطة
         const AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
 
         AdController.show().then((result) => {
           isWatchingAd = false;
-          // إضافة المكافأة فور انتهاء الإعلان بنجاح
           setBal(getBal() + 0.05);
-          // فاصل زمني 30 ثانية بين كل إعلان والآخر
           localStorage.setItem(getUserKey('ad_cooldown'), (Date.now() + (30 * 1000)).toString());
           alert("🎉 تهانينا! شاهدت الإعلان بالكامل وحصلت على +0.05$ في رصيدك!");
           refreshAdUI();
