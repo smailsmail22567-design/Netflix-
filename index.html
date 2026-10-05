@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>متجر حسابات نتفلكس</title>
-  <!-- مكتبات تليجرام وإعلانات Adsgram الرسمية -->
+  <!-- مكتبة تليجرام وسكريبت إعلانات GigaPub الرسمي -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  <script src="https://ad.gigapub.tech/script?id=8503"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -71,65 +71,33 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
+      padding: 12px 16px;
       background: #141414;
       border-bottom: 1px solid #222;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     .menu-btn {
-      font-size: 24px;
+      font-size: 26px;
       cursor: pointer;
       color: #fff;
       display: flex;
       align-items: center;
-      padding: 2px 4px;
+      padding: 2px 6px;
     }
     .brand-title {
       color: #e50914;
       font-weight: 900;
-      font-size: 18px;
+      font-size: 20px;
       letter-spacing: 1.5px;
-    }
-
-    /* قسم الشارات العلوية (المشتركين + الرصيد) */
-    .header-badges {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .members-badge {
-      background: #181818;
-      border: 1px solid #2b2b2b;
-      padding: 4px 8px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #38bdf8;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-    }
-    .members-badge .dot {
-      width: 6px;
-      height: 6px;
-      background: #38bdf8;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #38bdf8;
     }
     .balance-badge {
       background: #1c1c1c;
       border: 1px solid #333;
-      padding: 4px 8px;
+      padding: 4px 10px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: #4cd964;
     }
@@ -283,7 +251,7 @@
       cursor: not-allowed;
     }
 
-    /* زر إعلانات Adsgram */
+    /* زر إعلانات GigaPub */
     .btn-ad-watch {
       background: linear-gradient(135deg, #e50914, #ff3b30);
       color: white;
@@ -461,23 +429,11 @@
     </div>
   </div>
 
-  <!-- الشريط العلوي مع مربع الأعضاء الحقيقي -->
+  <!-- الشريط العلوي -->
   <div class="header">
-    <div class="header-right">
-      <div class="menu-btn" onclick="openGuideModal()">☰</div>
-      <div class="brand-title">NETFLIX</div>
-    </div>
-    
-    <div class="header-badges">
-      <!-- مربع عدد الأعضاء المباشر -->
-      <div class="members-badge" title="إجمالي مستخدمي البوت الفعليين">
-        <span class="dot"></span>
-        <span>👥</span>
-        <span id="membersCountText">...</span>
-      </div>
-      <!-- شارة الرصيد -->
-      <div class="balance-badge" id="userBalanceBadge">رصيدك: $0.00</div>
-    </div>
+    <div class="menu-btn" onclick="openGuideModal()">☰</div>
+    <div class="brand-title">NETFLIX</div>
+    <div class="balance-badge" id="userBalanceBadge">رصيدك: $0.00</div>
   </div>
 
   <div class="container">
@@ -560,11 +516,11 @@
         تحقق وتفعيل رصيد القنوات (0.50$) ✅
       </button>
 
-      <!-- مشاهدة إعلانات Adsgram -->
+      <!-- مشاهدة إعلانات GigaPub المربوطة بكود التطبيق 8503 -->
       <div class="section-title" style="margin-top: 25px;">🎬 مشاهدة إعلانات لربح الرصيد</div>
       <div class="task-card" style="border: 1px solid #3d0507; background: #160d0e;">
         <div>
-          <div class="task-title">مشاهدة إعلان فيديو</div>
+          <div class="task-title">مشاهدة إعلان فيديو (GigaPub)</div>
           <div class="task-reward" id="adStatusText" style="color: #ff4d4d;">مكافأة فورية: +0.05$</div>
         </div>
         <button class="btn-ad-watch" id="adWatchBtn" onclick="watchAdReward()">
@@ -671,8 +627,6 @@
       try { tg.ready(); tg.expand(); } catch (e) {}
     }
 
-    const ADSGRAM_BLOCK_ID = "int-51873";
-
     function getUserId() {
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
         return "u_" + tg.initDataUnsafe.user.id;
@@ -683,47 +637,6 @@
         localStorage.setItem('app_session_uid', localId);
       }
       return localId;
-    }
-
-    /* نظام عداد حقيقي لا يعتمد على خوادم محظورة ويبدأ بعدد أعضائك الحقيقي (مثلاً 9 أو 10) */
-    function updateMembersCounter() {
-      const el = document.getElementById('membersCountText');
-      const BASE_OFFSET = 9; // عدد أعضائك الأوليين ليظهر 10 فوراً لأول شخص
-      const STORE_KEY = "netflix_bot_users_2026";
-      const hasCounted = localStorage.getItem('user_counted_final_v1');
-
-      if (!hasCounted) {
-        // زيادة العداد السحابي الحقيقي بمقدار 1 عبر API مباشر وسريع
-        fetch(`https://api.counterapi.dev/v1/${STORE_KEY}/members/up`)
-          .then(res => res.json())
-          .then(data => {
-            localStorage.setItem('user_counted_final_v1', 'true');
-            if (el && data.count) {
-              el.innerText = (data.count + BASE_OFFSET).toString();
-            }
-          })
-          .catch(() => {
-            // بديل في حال انقطاع الـ API السحابي
-            let localCount = parseInt(localStorage.getItem('cached_members_num') || '10');
-            localCount += 1;
-            localStorage.setItem('cached_members_num', localCount.toString());
-            localStorage.setItem('user_counted_final_v1', 'true');
-            if (el) el.innerText = localCount.toString();
-          });
-      } else {
-        // جلب الرقم الفعلي الحالي دون زيادة
-        fetch(`https://api.counterapi.dev/v1/${STORE_KEY}/members`)
-          .then(res => res.json())
-          .then(data => {
-            if (el && data.count) {
-              el.innerText = (data.count + BASE_OFFSET).toString();
-            }
-          })
-          .catch(() => {
-            let localCount = localStorage.getItem('cached_members_num') || '10';
-            if (el) el.innerText = localCount;
-          });
-      }
     }
 
     const MASTER_NETFLIX_LINKS = [
@@ -811,7 +724,6 @@
       }, 2400);
 
       updateBalance();
-      updateMembersCounter();
       updateStockDisplay();
       initDailyBonusTimer();
       initAdTimer();
@@ -919,7 +831,7 @@
       }
     }
 
-    /* نظام مشاهدة إعلانات Adsgram */
+    /* تكامل إعلانات GigaPub الجديد */
     let adInterval = null;
     let isWatchingAd = false;
 
@@ -964,30 +876,31 @@
 
       const btn = document.getElementById('adWatchBtn');
       const btnText = document.getElementById('adBtnText');
-      const statusText = document.getElementById('adStatusText');
 
-      if (window.Adsgram) {
+      // التحقق من توفر دالة GigaPub الرسمية
+      if (typeof window.showGiga === 'function') {
         isWatchingAd = true;
         btn.className = "btn-ad-watch disabled";
         btnText.innerText = "جاري التحميل...";
 
-        const AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-
-        AdController.show().then((result) => {
-          isWatchingAd = false;
-          setBal(getBal() + 0.05);
-          localStorage.setItem(getUserKey('ad_cooldown'), (Date.now() + (30 * 1000)).toString());
-          alert("🎉 تهانينا! شاهدت الإعلان بالكامل وحصلت على +0.05$ في رصيدك!");
-          refreshAdUI();
-        }).catch((err) => {
-          isWatchingAd = false;
-          refreshAdUI();
-          console.error("Adsgram error:", err);
-          alert("⚠️ لم يكتمل الإعلان أو لم يتوفر إعلان حالياً، حاول مجدداً بعد قليل.");
-        });
+        window.showGiga()
+          .then(() => {
+            isWatchingAd = false;
+            // إضافة المكافأة فور انتهاء الإعلان بنجاح
+            setBal(getBal() + 0.05);
+            localStorage.setItem(getUserKey('ad_cooldown'), (Date.now() + (30 * 1000)).toString());
+            alert("🎉 تهانينا! شاهدت الإعلان وحصلت على +0.05$ في رصيدك!");
+            refreshAdUI();
+          })
+          .catch((e) => {
+            isWatchingAd = false;
+            refreshAdUI();
+            console.error("GigaPub Error:", e);
+            alert("⚠️ التطبيق قيد المراجعة أو لم يكتمل الإعلان، يرجى المحاولة لاحقاً.");
+          });
 
       } else {
-        alert("جاري تحميل مزود الإعلانات، يرجى المحاولة بعد قليل...");
+        alert("جاري تهيئة مزود الإعلانات أو التطبيق قيد المراجعة في GigaPub، يرجى المحاولة بعد قليل...");
       }
     }
 
