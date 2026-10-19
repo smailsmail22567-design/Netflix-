@@ -167,6 +167,7 @@ def check_user_subscriptions(user_id):
                 save_data(data)
     return missing
 
+# سيرفر استقبال بصمة الجهاز عبر رندر
 class DeviceVerifyHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers.get('Content-Length', 0))
