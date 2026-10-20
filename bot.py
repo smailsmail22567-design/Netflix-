@@ -3,8 +3,6 @@ import os
 import urllib.parse
 import urllib.request
 import time
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading
 
 TOKEN = "8882053235:AAHfSGD0w2xPHlXWs3qax_NAtHBjCzjjScE"
 ADMIN_CHANNEL = "@prov_ed"
@@ -33,10 +31,6 @@ def load_data():
         data["eshterak"] = {}
     if "tasks_progress" not in data:
         data["tasks_progress"] = {}
-    if "devices" not in data:
-        data["devices"] = {} # تخزين بصمات الأجهزة لمنع الحسابات المكررة
-    if "verified_users" not in data:
-        data["verified_users"] = [] # قائمة المستخدمين الذين اجتازوا التحقق
     
     data["custom_tasks"] = [
         {
@@ -168,60 +162,6 @@ def check_user_subscriptions(user_id):
                 esh_list[ch].append(user_id)
                 save_data(data)
     return missing
-
-# سيرفر مصغر يستقبل طلبات كود HTML الخاص بك (/api/verify-device)
-class DeviceVerifyHandler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        if self.path == '/api/verify-device':
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            try:
-                req_data = json.loads(post_data.decode('utf-8'))
-                user_id = str(req_data.get("user_id"))
-                fingerprint = req_data.get("fingerprint")
-                
-                global data
-                if not user_id or not fingerprint:
-                    self.send_response(400)
-                    self.send_header('Content-Type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"status": "error", "message": "بيانات غير صالحة"}).encode('utf-8'))
-                    return
-
-                # فحص ما إذا كانت البصمة مسجلة لحساب تيليجرام آخر
-                if fingerprint in data["devices"] and data["devices"][fingerprint] != user_id:
-                    self.send_response(200) # نرسل 200 ليتعامل معه الـ fetch بشكل صحيح ويعرض الـ message
-                    self.send_header('Content-Type', 'application/json')
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"status": "error", "message": "⛔ هذا الجهاز مسجل مسبقاً بحساب آخر ولا يمكن فتح حسابات متعددة!"}).encode('utf-8'))
-                    return
-
-                # حفظ البصمة وربطها بالمستخدم واعتباره متحققاً منه
-                data["devices"][fingerprint] = user_id
-                if user_id not in data["verified_users"]:
-                    data["verified_users"].append(user_id)
-                save_data(data)
-
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps({"status": "success"}).encode('utf-8'))
-            except Exception as e:
-                print(f"API Error: {e}")
-                self.send_response(500)
-                self.end_headers()
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-def run_http_server():
-    port = int(os.environ.get("PORT", 8080))
-    server_address = ('', port)
-    httpd = HTTPServer(server_address, DeviceVerifyHandler)
-    print(f"🌐 سيرفر التحقق يعمل على المنفذ {port}...")
-    httpd.serve_forever()
-
-threading.Thread(target=run_http_server, daemon=True).start()
 
 bot_info = api_request("getMe")
 BOT_USERNAME = bot_info["result"]["username"] if bot_info and bot_info.get("ok") else "YourBot"
@@ -490,16 +430,12 @@ while True:
                         if user_id in data["admins"]:
                             send_message(chat_id, "اهلا بك عزيزي المطور\nاليك لوحة الصانع\n⚙️ — — — — — — — — ⚙️", get_admin_keyboard())
                         else:
-                            # اشتراط التحقق الأمني قبل السماح للمستخدم برؤية القائمة أو استخدام البوت
-                            if str(user_id) not in data.get("verified_users", []):
-                                web_app_keyboard = {
-                                    "inline_keyboard": [
-                                        [{"text": "🔒 تحقق من الجهاز للمتابعة", "web_app": {"url": "https://smailsmail22567-design.github.io/Mini-app/"}}]
-                                    ]
-                                }
-                                send_message(chat_id, "👋 أهلاً بك! يرجى النقر على زر التحقق الأمني أدناه لبدء استخدام البوت:", web_app_keyboard)
-                            else:
-                                send_message(chat_id, "👋 أهلاً بك في بوت المهام المجانية وأرباح الدولار ($)!\n\nاختر ما ترغب به من الأزرار أدناه:", get_main_menu())
+                            web_app_keyboard = {
+                                "inline_keyboard": [
+                                    [{"text": "🔒 تحقق من الجهاز للمتابعة", "web_app": {"url": "https://smailsmail22567-design.github.io/Mini-app/"}}]
+                                ]
+                            }
+                            send_message(chat_id, "👋 أهلاً بك! يرجى النقر على زر التحقق الأمني أدناه لبدء استخدام البوت:", web_app_keyboard)
     except Exception as e:
         print(f"Error in main loop: {e}")
         time.sleep(3)
