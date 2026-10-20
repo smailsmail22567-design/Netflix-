@@ -35,6 +35,8 @@ def load_data():
         data["tasks_progress"] = {}
     if "devices" not in data:
         data["devices"] = {}
+    if "verify_tokens" not in data:
+        data["verify_tokens"] = {}
     
     data["custom_tasks"] = [
         {
@@ -167,40 +169,52 @@ def check_user_subscriptions(user_id):
                 save_data(data)
     return missing
 
-# سيرفر استقبال بصمة الجهاز عبر رندر
 class DeviceVerifyHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        content_length = int(self.headers.get('Content-Length', 0))
-        post_data = self.rfile.read(content_length)
-        try:
-            req_data = json.loads(post_data.decode('utf-8'))
-            user_id = str(req_data.get("user_id"))
-            fingerprint = req_data.get("fingerprint")
-
-            if user_id and fingerprint:
+        if self.path == '/api/verify':
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                req_data = json.loads(post_data.decode('utf-8'))
+                token = req_data.get("token")
+                components = req_data.get("components", {})
+                
                 global data
-                if fingerprint in data["devices"] and data["devices"][fingerprint] != user_id:
+                if not token or token not in data.get("verify_tokens", {}):
                     self.send_response(400)
                     self.end_headers()
-                    self.wfile.write(b"Device already registered with another account!")
+                    self.wfile.write(b"Invalid or expired token")
                     return
 
-                data["devices"][fingerprint] = user_id
+                user_id = str(data["verify_tokens"][token])
+                fingerprint_string = f"{components.get('canvas')}_{components.get('webgl')}_{components.get('screen')}_{components.get('platform')}"
+                
+                if fingerprint_string in data["devices"] and data["devices"][fingerprint_string] != user_id:
+                    self.send_response(409)
+                    self.end_headers()
+                    self.wfile.write(b"Device already registered with another account")
+                    return
+
+                data["devices"][fingerprint_string] = user_id
+                del data["verify_tokens"][token]
                 save_data(data)
 
                 self.send_response(200)
                 self.end_headers()
-                self.wfile.write(b"Success")
-        except Exception as e:
-            print(f"Web App Error: {e}")
-            self.send_response(500)
+                self.wfile.write(b"Verified successfully")
+            except Exception as e:
+                print(f"API Verify Error: {e}")
+                self.send_response(500)
+                self.end_headers()
+        else:
+            self.send_response(404)
             self.end_headers()
 
 def run_http_server():
     port = int(os.environ.get("PORT", 8080))
     server_address = ('', port)
     httpd = HTTPServer(server_address, DeviceVerifyHandler)
-    print(f"🌐 سيرفر التحقق من الأجهزة يعمل على المنفذ {port}...")
+    print(f"🌐 سيرفر التحقق يعمل على المنفذ {port}...")
     httpd.serve_forever()
 
 threading.Thread(target=run_http_server, daemon=True).start()
@@ -328,9 +342,13 @@ while True:
                             btns.append([{"text": f"انضم إلى القناة: {ch}", "url": f"https://t.me/{ch.lstrip('@')}"}])
                         btns.append([{"text": "🔄 تحقق من الاشتراك", "callback_data": "check_subs"}])
                         
+                        verify_token = str(int(time.time() * 1000)) + str(user_id)
+                        data["verify_tokens"][verify_token] = user_id
+                        save_data(data)
+                        
                         web_app_keyboard = {
                             "inline_keyboard": [
-                                [{"text": "🔒 تحقق من الجهاز للمتابعة", "web_app": {"url": "https://smailsmail22567-design.github.io/Mini-app/"}}],
+                                [{"text": "🔒 تحقق من الجهاز للمتابعة", "web_app": {"url": f"https://smailsmail22567-design.github.io/Mini-app/?t={verify_token}"}}],
                                 *btns
                             ]
                         }
@@ -472,9 +490,13 @@ while True:
                         if user_id in data["admins"]:
                             send_message(chat_id, "اهلا بك عزيزي المطور\nاليك لوحة الصانع\n⚙️ — — — — — — — — ⚙️", get_admin_keyboard())
                         else:
+                            verify_token = str(int(time.time() * 1000)) + str(user_id)
+                            data["verify_tokens"][verify_token] = user_id
+                            save_data(data)
+
                             web_app_keyboard = {
                                 "inline_keyboard": [
-                                    [{"text": "🔒 تحقق من الجهاز للمتابعة", "web_app": {"url": "https://smailsmail22567-design.github.io/Mini-app/"}}]
+                                    [{"text": "🔒 تحقق من الجهاز للمتابعة", "web_app": {"url": f"https://smailsmail22567-design.github.io/Mini-app/?t={verify_token}"}}]
                                 ]
                             }
                             send_message(chat_id, "👋 أهلاً بك! يرجى النقر على زر التحقق الأمني أدناه لبدء استخدام البوت:", web_app_keyboard)
